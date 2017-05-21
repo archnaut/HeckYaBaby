@@ -1,6 +1,7 @@
 ﻿Imports OpenQA.Selenium
 Imports OpenQA.Selenium.Chrome
 Imports TechTalk.SpecFlow
+Imports TechTalk.SpecFlow.Assist
 Imports Xunit
 
 <Binding>
@@ -21,20 +22,29 @@ Public Class BrowseProfilesSteps
     Public Sub GivenAnExistingProfiles()
     End Sub
 
+
     <[When]("I open the Profile console")>
     Public Sub WhenIOpenTheProfileConsole()
         _driver.Navigate().GoToUrl("http://localhost:57520")
     End Sub
 
-    <[Then]("each page will have (.*) profiles")>
+    <[Then]("I will be present (.*) pages of Profiles")>
     Public Sub ThenIWillBePresentPagesOfProfiles(pageCount As Int32)
 
         Dim grid = _driver.FindElement(By.Id("profileGrid"))
         Assert.NotNull(grid)
-
     End Sub
 
-    <[Then]("I will be present (.*) pages of Profiles")>
-    Public Sub ThenEachPageWillHaveProfiles(profileCount As Int32)
+    <[Then]("each page will have (.*) profiles")>
+    Public Sub ThenEachPageWillHaveProfiles(p0 As Int32)
+    End Sub
+
+    <[Then]("each Profile will have")>
+    Public Sub ThenEachProfileWillHave(table As Table)
+        Dim headers = _driver.FindElements(By.TagName("th")).Select(function(element) element.GetAttribute("data-Title")).Where( function(s) Not String.IsNullOrEmpty(s))
+        Dim properties = table.Rows.Select(function(row) row.Values(0))
+
+        
+        Assert.True(headers.All(function(header) properties.Any(function(prop) header = prop)) )
     End Sub
 End Class
