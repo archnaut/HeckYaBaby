@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Heck Ya Baby</title>
+    <link href="content/kendo.common.min.css" rel="stylesheet" />
+    <link href="content/kendo.black.min.css" rel="stylesheet" />
+    <link href="content/site.css" rel="stylesheet" />
+
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/kendo.web.min.js"></script>
+
+    <meta charset="utf-8" />
+</head>
+<body>
+<div id="profileGrid" class="center"></div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#profileGrid").kendoGrid({
+                columns: [
+                    { field: "Name", title: "Name" },
+                    { field: "Address" },
+                    { field: "PhoneNumber", title: "Phone Number" },
+                    { field: "DateOfBirth", title: "Date Of Birth", format: "{0:MM/dd/yyyy}" },
+                    { field: "FriendCount", title: "Number of Friends", format: "{0:n0}" },
+                    { command: ["edit"] },
+                    { command: ["destroy"] }
+                ]
+            });
+        });
+    </script>
+
+</body>
+</html>
