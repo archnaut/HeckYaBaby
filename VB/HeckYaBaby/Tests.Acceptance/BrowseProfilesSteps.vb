@@ -1,7 +1,6 @@
 ﻿Imports OpenQA.Selenium
 Imports OpenQA.Selenium.Chrome
 Imports TechTalk.SpecFlow
-Imports TechTalk.SpecFlow.Assist
 Imports Xunit
 
 <Binding>
@@ -41,10 +40,22 @@ Public Class BrowseProfilesSteps
 
     <[Then]("each Profile will have")>
     Public Sub ThenEachProfileWillHave(table As Table)
-        Dim headers = _driver.FindElements(By.TagName("th")).Select(function(element) element.GetAttribute("data-Title")).Where( function(s) Not String.IsNullOrEmpty(s))
+        Dim headers = _driver.
+            FindElements(By.TagName("th")).
+            Select(function(element) element.GetAttribute("data-Title")).
+            Where(function(s) Not String.IsNullOrEmpty(s))
+
         Dim properties = table.Rows.Select(function(row) row.Values(0))
 
+
+        Assert.True(headers.All(function(header) properties.Any(function(prop) header = prop)))
+    End Sub
+
+    <[Then]("I can add Profiles")>
+    Public Sub ThenICanAddProfiles()
+        Dim toolbar = _driver.FindElement(By.ClassName("k-grid-toolbar"))
+        Dim button = toolbar.FindElement(By.TagName("a"))
         
-        Assert.True(headers.All(function(header) properties.Any(function(prop) header = prop)) )
+        Assert.Equal("Add new record", button.Text)
     End Sub
 End Class

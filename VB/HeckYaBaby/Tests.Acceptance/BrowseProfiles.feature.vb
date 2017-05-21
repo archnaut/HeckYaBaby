@@ -56,7 +56,7 @@ Namespace Tests.Acceptance
             testRunner.CollectScenarioErrors
         End Sub
         
-        Public Overridable Sub SetFixture(ByVal fixtureData As BrowseProfilesFeature.FixtureData) 
+        Public Overridable Sub SetFixture(ByVal fixtureData As BrowseProfilesFeature.FixtureData)
         End Sub
         
         Sub System_IDisposable_Dispose() Implements System.IDisposable.Dispose
@@ -92,6 +92,9 @@ Me.ScenarioSetup(scenarioInfo)
             table1.AddRow(New String() {"Number of Friends"})
 #ExternalSource("BrowseProfiles.feature",12)
  testRunner.And("each Profile will have", CType(Nothing,String), table1, "And ")
+#End ExternalSource
+#ExternalSource("BrowseProfiles.feature",19)
+ testRunner.And("I can add Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
 #End ExternalSource
             Me.ScenarioCleanup
         End Sub

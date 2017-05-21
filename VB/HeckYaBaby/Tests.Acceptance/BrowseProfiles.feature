@@ -16,3 +16,4 @@ Scenario: Browse Profile
 	| Phone Number      |
 	| Date of Birth     |
 	| Number of Friends |
+	And I can add Profiles
