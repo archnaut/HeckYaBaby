@@ -67,17 +67,13 @@ Public Class HeckYaBabyService
 
 
         Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
-            _repository.Update (Of ProfileEntity)(
-                Function(x) x.Id = profile.Id,
-                Function(x) new ProfileEntity With{
-                                                     .Name = profile.Name,
-                                                     .Address = profile.Address,
-                                                     .PhoneNumber = profile.PhoneNumber,
-                                                     .DateOfBirth = profile.DateOfBirth,
-                                                     . FriendCount = profile.FriendCount
-                                                     })
+        
+            Dim entity = Map(profile)
+            
+            _repository.Update(entity)
 
             unitOfWork.Commit()
+
         End Using
 
         _serviceContext.ResponseContentType(ApplicationJson)
@@ -102,6 +98,17 @@ Public Class HeckYaBabyService
 
     End Sub
 
+    Private Shared Function Map(profile As Profile) As ProfileEntity
+        return New ProfileEntity With{
+            .Id = profile.Id,
+            .Address = profile.Address,
+            .DateOfBirth = profile.DateOfBirth,
+            .Name = profile.Name,
+            .PhoneNumber = profile.PhoneNumber,
+            .FriendCount = profile.FriendCount
+        }
+ 
+    End Function
 
     Private Shared Function Map(entity As ProfileEntity) As Profile
 

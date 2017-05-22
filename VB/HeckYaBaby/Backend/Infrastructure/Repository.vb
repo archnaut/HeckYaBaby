@@ -38,12 +38,17 @@ Public Class Repository
     Public Sub Remove (Of T As Class)(item As T) Implements IRepository.Remove
         _context.Set(Of T).Remove(item)
     End Sub
-
+    
     Public Function Update (Of T As Class)(predicate As Expression(Of Func(Of T,Boolean)), map As Expression(Of Func(Of T,T))) As Integer Implements IRepository.Update
         return _context.Set(Of T).
             Where(predicate).
             Update(map)
     End Function
+
+    Public Sub Update(Of T As Class)(entity As T) Implements IRepository.Update
+        _context.Set(Of T).Attach(entity)
+        _context.Entry(entity).State = EntityState.Modified
+    End Sub
 
     Private Class UnitOfWork
         Implements IUnitOfWork

@@ -87,6 +87,7 @@
     <Compile Include="ConsoleHost.vb" />
     <Compile Include="Domain\IUnitOfWork.vb" />
     <Compile Include="Domain\ProfileEntity.vb" />
+    <Compile Include="Domain\IAuditable.vb" />
     <Compile Include="Presentation\CorsEndpointBehavior.vb" />
     <Compile Include="Presentation\HeckYaBabyService.vb" />
     <Compile Include="Presentation\IHeckYaBabyService.vb" />
