@@ -11,6 +11,9 @@ Namespace Presentation
         Public Property Id As Integer
 
         <DataMember>
+        Public Property Active As Boolean
+
+        <DataMember>
         Public Property Address As String
 
         Public Property DateOfBirth As Date

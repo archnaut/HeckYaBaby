@@ -3,6 +3,7 @@
         Implements IAuditable
 
         Public Property Id As Integer
+        Public Property Active As Boolean
         Public Property Address As String
         Public Property DateOfBirth As Date
         Public Property FriendCount As Integer

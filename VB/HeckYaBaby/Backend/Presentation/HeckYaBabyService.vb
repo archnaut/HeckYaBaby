@@ -105,7 +105,8 @@ Public Class HeckYaBabyService
             .DateOfBirth = profile.DateOfBirth,
             .Name = profile.Name,
             .PhoneNumber = profile.PhoneNumber,
-            .FriendCount = profile.FriendCount
+            .FriendCount = profile.FriendCount,
+            .Active = profile.Active
         }
  
     End Function
@@ -118,7 +119,8 @@ Public Class HeckYaBabyService
             .DateOfBirth = entity.DateOfBirth,
             .Name = entity.Name,
             .PhoneNumber = entity.PhoneNumber,
-            .FriendCount = entity.FriendCount
+            .FriendCount = entity.FriendCount,
+            .Active = entity.Active
         }
 
     End Function
