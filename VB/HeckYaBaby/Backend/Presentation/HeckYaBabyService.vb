@@ -1,5 +1,6 @@
 ﻿
 Imports System.Net
+Imports System.ServiceModel.Dispatcher
 Imports System.ServiceModel.Web
 Imports Backend.Domain
 Imports Backend.Infrastructure
@@ -31,18 +32,11 @@ Public Class HeckYaBabyService
 
         Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
 
-            Dim entity = new ProfileEntity With {
-                    .Name = profile.Name,
-                    .Address = profile.Address,
-                    .PhoneNumber = profile.PhoneNumber,
-                    .DateOfBirth = profile.DateOfBirth,
-                    .FriendCount = profile.FriendCount
-                    }
+            Dim entity = Map(profile)
 
             _repository.Add(entity)
 
             unitOfWork.Commit()
-
 
             return Map(entity)
         End Using
@@ -50,15 +44,31 @@ Public Class HeckYaBabyService
     End Function
 
 
-    Public Function GetProfile() As IEnumerable(Of Profile) Implements IHeckYaBabyService.GetProfile
+    Public Function GetProfiles() As ProfilePage Implements IHeckYaBabyService.GetProfiles
+
+
+        Dim pageSize = _serviceContext.PageSize
+        Dim page = _serviceContext.Page - 1
+
+        Dim query = _repository.
+            AllInstances(Of ProfileEntity).
+            OrderBy(Function(x) x.Id).
+            Skip(page * pageSize)
+
+        Dim profiles As IEnumerable(Of ProfileEntity)
+
+        If pageSize > 0 Then
+            profiles = query.Take(pageSize).ToList()
+        Else
+            profiles = query.ToList()
+        End If
 
         _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
 
-        Return _repository.
-            AllInstances(Of ProfileEntity).
-            ToList().
-            Select(Function(x) Map(x)).
-            ToList()
+        return New ProfilePage With{
+            .ItemCount = _repository.AllInstances(of ProfileEntity).Count(),
+            .Items = profiles.Select(Function(x) Map(x)).ToList()
+            }
 
     End Function
 
@@ -93,8 +103,7 @@ Public Class HeckYaBabyService
 
         End Using
 
-        _serviceContext.ResponseContentType(ApplicationJson)
-        _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
+        _serviceContext.ResponseStatusCode(HttpStatusCode.NoContent)
 
     End Sub
 

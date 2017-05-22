@@ -56,6 +56,9 @@ Namespace Tests.Acceptance
             testRunner.CollectScenarioErrors
         End Sub
         
+        Public Overridable Sub SetFixture(ByVal fixtureData As BrowseProfilesFeature.FixtureData) 
+        End Sub
+        
         Sub System_IDisposable_Dispose() Implements System.IDisposable.Dispose
             Me.ScenarioTearDown
         End Sub
@@ -87,16 +90,17 @@ Me.ScenarioSetup(scenarioInfo)
             table1.AddRow(New String() {"Phone Number"})
             table1.AddRow(New String() {"Date of Birth"})
             table1.AddRow(New String() {"Number of Friends"})
+            table1.AddRow(New String() {"Active"})
 #ExternalSource("BrowseProfiles.feature",12)
  testRunner.And("each Profile will have", CType(Nothing,String), table1, "And ")
 #End ExternalSource
-#ExternalSource("BrowseProfiles.feature",19)
+#ExternalSource("BrowseProfiles.feature",20)
  testRunner.And("I can add Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
 #End ExternalSource
-#ExternalSource("BrowseProfiles.feature",20)
+#ExternalSource("BrowseProfiles.feature",21)
  testRunner.And("I can edit Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
 #End ExternalSource
-#ExternalSource("BrowseProfiles.feature",21)
+#ExternalSource("BrowseProfiles.feature",22)
  testRunner.And("I can delete Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
 #End ExternalSource
             Me.ScenarioCleanup

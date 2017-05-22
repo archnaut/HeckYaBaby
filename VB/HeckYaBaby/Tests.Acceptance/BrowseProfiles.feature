@@ -16,6 +16,7 @@ Scenario: Browse Profile
 	| Phone Number      |
 	| Date of Birth     |
 	| Number of Friends |
+	| Active            |
 	And I can add Profiles
 	And I can edit Profiles
 	And I can delete Profiles

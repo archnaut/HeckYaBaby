@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Presentation\IServiceContext.vb" />
     <Compile Include="Presentation\Profile.vb" />
+    <Compile Include="Presentation\ProfilePage.vb" />
     <Compile Include="Presentation\ServiceContext.vb" />
   </ItemGroup>
   <ItemGroup>

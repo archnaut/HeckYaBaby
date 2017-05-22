@@ -43,11 +43,16 @@
                     dataType: "json",
                     type: "DELETE"
                 },
-                parameterMap: function(data) {
+                parameterMap: function(data, type) {
+                    if (type === "read")
+                        return data;
+
                     return kendo.stringify(data);
                 }
             },
             schema: {
+                data: "Items",
+                total: "ItemCount",
                 model: {
                     id: "Id",
                     fields: {
@@ -80,6 +85,7 @@
                             format: "{0:n0}"
                         },
                         Active: {
+                            defaultValue: false,
                             editable: true,
                             nullable: false,
                             type: "bool"
@@ -88,6 +94,7 @@
                     }
                 }
             },
+            serverPaging: true,
             pageSize: 10,
             error: function(e) {
                 alert("Status: " + e.status + "; Error message: " + e.errorThrown);
@@ -102,7 +109,7 @@
                 { field: "PhoneNumber", title: "Phone Number" },
                 { field: "DateOfBirth", title: "Date of Birth", format: "{0:MM/dd/yyyy}" },
                 { field: "FriendCount", title: "Number of Friends", format: "{0:n0}" },
-                { field: "Active", width: "120px", editor: customBoolEditor, template: '<input type="checkbox" disabled="disable" #= Active ? \'checked="checked"\' : "" # class="chkbx" />' },
+                { field: "Active", editor: customBoolEditor, template: '<input type="checkbox" disabled="disable" #= Active ? \'checked="checked"\' : "" # class="chkbx" />' },
                 { command: ["edit"] },
                 { command: ["destroy"] }
             ],
@@ -117,6 +124,12 @@
         $('<label class="k-checkbox-label">&#8203;</label>').appendTo(container);
     }
 
+    $("#grid .k-grid-content").on("change", "input.chkbx", function (e) {
+        var grid = $("#grid").data("kendoGrid"),
+            dataItem = grid.dataItem($(e.target).closest("tr"));
+
+        dataItem.set("Discontinued", this.checked);
+    });
 </script>
 
 </body>

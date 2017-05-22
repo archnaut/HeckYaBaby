@@ -16,7 +16,7 @@ Namespace Presentation
 
         <OperationContract>
         <WebInvoke(Method := "GET", UriTemplate := "/Profile", ResponseFormat := WebMessageFormat.Json)>
-        Function GetProfile() As IEnumerable(Of Profile)
+        Function GetProfiles() As ProfilePage
 
         <OperationContract>
         <WebInvoke(Method := "PUT", UriTemplate := "/Profile/{id}", RequestFormat := WebMessageFormat.Xml, ResponseFormat := WebMessageFormat.Json)>
