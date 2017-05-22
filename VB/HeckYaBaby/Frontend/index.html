@@ -16,7 +16,80 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            var profileDataSource = new kendo.data.DataSource({
+                transport: {
+                    create: {
+                        url: "http://localhost:8989/api/v1/profile",
+                        contentType: "application/json; charset=UTF-8",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    read: {
+                        url: "http://localhost:8989/api/v1/profile",
+                        dataType: "json"
+                    },
+                    update: {
+                        url: function (profile) {
+                            return "http://localhost:8989/api/v1/profile/" + profile.Id;
+                        },
+                        contentType: "application/json; charset=UTF-8",
+                        dataType: "json",
+                        type: "PUT"
+                    },
+                    destroy: {
+                        url: function (profile) {
+                            return "http://localhost:8989/api/v1/profile/" + profile.Id;
+                        },
+                        dataType: "json",
+                        type: "DELETE"
+                    },
+                    parameterMap: function (data) {
+                        return kendo.stringify(data);
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: {
+                                defaultValue: -1,
+                                editable: false,
+                                nullable: false
+                            },
+                            Name: {
+                                editable: true,
+                                nullable: false
+                            },
+                            Address: {
+                                editable: true,
+                                nullable: false
+                            },
+                            PhoneNumber: {
+                                editable: true,
+                                nullable: false
+                            },
+                            DateOfBirth: {
+                                editable: true,
+                                nullable: false,
+                                type: "date"
+                            },
+                            FriendCount: {
+                                editable: true,
+                                nullable: false,
+                                type: "number",
+                                format: "{0:n0}"
+                            }
+                        }
+                    }
+                },
+                pageSize: 10,
+                error: function (e) {
+                    alert("Status: " + e.status + "; Error message: " + e.errorThrown);
+                }
+            });
+
             $("#profileGrid").kendoGrid({
+                dataSource: profileDataSource,
                 columns: [
                     { field: "Name", title: "Name" },
                     { field: "Address" },
@@ -26,7 +99,10 @@
                     { command: ["edit"] },
                     { command: ["destroy"] }
                 ],
-                toolbar: ["create"]
+                toolbar: ["create"],
+                editable: "inline",
+                pageable: true,
+                scrollable: false
             });
         });
     </script>

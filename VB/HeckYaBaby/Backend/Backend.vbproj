@@ -63,6 +63,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -82,9 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleHost.vb" />
+    <Compile Include="Domain\IUnitOfWork.vb" />
     <Compile Include="Domain\ProfileEntity.vb" />
+    <Compile Include="Presentation\CorsEndpointBehavior.vb" />
+    <Compile Include="Presentation\HeckYaBabyService.vb" />
+    <Compile Include="Presentation\IHeckYaBabyService.vb" />
     <Compile Include="Infrastructure\ContextInitializer.vb" />
     <Compile Include="Infrastructure\DataContext.vb" />
+    <Compile Include="Domain\IRepository.vb" />
+    <Compile Include="Infrastructure\Repository.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -100,6 +109,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Presentation\IServiceContext.vb" />
+    <Compile Include="Presentation\Profile.vb" />
+    <Compile Include="Presentation\ServiceContext.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

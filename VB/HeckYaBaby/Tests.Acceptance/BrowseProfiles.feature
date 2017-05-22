@@ -17,3 +17,5 @@ Scenario: Browse Profile
 	| Date of Birth     |
 	| Number of Friends |
 	And I can add Profiles
+	And I can edit Profiles
+	And I can delete Profiles

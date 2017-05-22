@@ -56,9 +56,6 @@ Namespace Tests.Acceptance
             testRunner.CollectScenarioErrors
         End Sub
         
-        Public Overridable Sub SetFixture(ByVal fixtureData As BrowseProfilesFeature.FixtureData)
-        End Sub
-        
         Sub System_IDisposable_Dispose() Implements System.IDisposable.Dispose
             Me.ScenarioTearDown
         End Sub
@@ -95,6 +92,12 @@ Me.ScenarioSetup(scenarioInfo)
 #End ExternalSource
 #ExternalSource("BrowseProfiles.feature",19)
  testRunner.And("I can add Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
+#End ExternalSource
+#ExternalSource("BrowseProfiles.feature",20)
+ testRunner.And("I can edit Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
+#End ExternalSource
+#ExternalSource("BrowseProfiles.feature",21)
+ testRunner.And("I can delete Profiles", CType(Nothing,String), CType(Nothing,TechTalk.SpecFlow.Table), "And ")
 #End ExternalSource
             Me.ScenarioCleanup
         End Sub
