@@ -13,7 +13,7 @@ Module TestContext
     <BeforeTestRun>
     Public Sub BeforeTestRun()
         StartService()
-        StartIISExpress()
+        StartExpress()
     End Sub
 
     <AfterTestRun>
@@ -32,7 +32,7 @@ Module TestContext
 
     End Sub
 
-    Private Sub StartIISExpress()
+    Private Sub StartExpress()
 
         Dim sitePath = Path.Combine(GetSolutionPath(), "Frontend")
         Dim arguments = string.Format(CultureInfo.InvariantCulture, "/path:""{0}"" /port:{1}", sitePath, Port)

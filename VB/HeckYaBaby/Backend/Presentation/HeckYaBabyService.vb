@@ -1,136 +1,137 @@
 ﻿
 Imports System.Net
-Imports System.ServiceModel.Dispatcher
 Imports System.ServiceModel.Web
 Imports Backend.Domain
 Imports Backend.Infrastructure
-Imports Backend.Presentation
 
-Public Class HeckYaBabyService
-   Implements IHeckYaBabyService
+Namespace Presentation
 
-    Private const ApplicationJson as String = "application/json; charset=utf-8"
-    Private ReadOnly _repository As IRepository
-    Private ReadOnly _serviceContext As IServiceContext
+    Public Class HeckYaBabyService
+        Implements IHeckYaBabyService
 
-    Public Sub New()
-        Dim context = new DataContext()
-        _repository = new Repository(context)
-        _serviceContext = new ServiceContext()
-    End Sub
+        Private const ApplicationJson as String = "application/json; charset=utf-8"
+        Private ReadOnly _repository As IRepository
+        Private ReadOnly _serviceContext As IServiceContext
 
-    Public Sub Options() Implements IHeckYaBabyService.Options
+        Public Sub New()
+            Dim context = new DataContext()
+            _repository = new Repository(context)
+            _serviceContext = new ServiceContext()
+        End Sub
 
-        WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-        WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
+        Public Sub Options() Implements IHeckYaBabyService.Options
 
-    End Sub
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
 
-    Public Function PostProfile(profile As Profile) As Profile Implements IHeckYaBabyService.PostProfile
+        End Sub
 
-        _serviceContext.ResponseContentType(ApplicationJson)
+        Public Function PostProfile(profile As Profile) As Profile Implements IHeckYaBabyService.PostProfile
 
-        Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
+            _serviceContext.ResponseContentType(ApplicationJson)
 
-            Dim entity = Map(profile)
+            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
 
-            _repository.Add(entity)
+                Dim entity = Map(profile)
 
-            unitOfWork.Commit()
+                _repository.Add(entity)
 
-            return Map(entity)
-        End Using
+                unitOfWork.Commit()
 
-    End Function
+                return Map(entity)
+            End Using
 
-
-    Public Function GetProfiles() As ProfilePage Implements IHeckYaBabyService.GetProfiles
+        End Function
 
 
-        Dim pageSize = _serviceContext.PageSize
-        Dim page = _serviceContext.Page - 1
-
-        Dim query = _repository.
-            AllInstances(Of ProfileEntity).
-            OrderBy(Function(x) x.Id).
-            Skip(page * pageSize)
-
-        Dim profiles As IEnumerable(Of ProfileEntity)
-
-        If pageSize > 0 Then
-            profiles = query.Take(pageSize).ToList()
-        Else
-            profiles = query.ToList()
-        End If
-
-        _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
-
-        return New ProfilePage With{
-            .ItemCount = _repository.AllInstances(of ProfileEntity).Count(),
-            .Items = profiles.Select(Function(x) Map(x)).ToList()
-            }
-
-    End Function
-
-    Public Function UpdateProfile(id As string, profile As Profile) As Profile _
-        Implements IHeckYaBabyService.UpdateProfile
+        Public Function GetProfiles() As ProfilePage Implements IHeckYaBabyService.GetProfiles
 
 
-        Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
+            Dim pageSize = _serviceContext.PageSize
+            Dim page = _serviceContext.Page - 1
+
+            Dim query = _repository.
+                    AllInstances(Of ProfileEntity).
+                    OrderBy(Function(x) x.Id).
+                    Skip(page * pageSize)
+
+            Dim profiles As IEnumerable(Of ProfileEntity)
+
+            If pageSize > 0 Then
+                profiles = query.Take(pageSize).ToList()
+            Else
+                profiles = query.ToList()
+            End If
+
+            _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
+
+            return New ProfilePage With{
+                .ItemCount = _repository.AllInstances(of ProfileEntity).Count(),
+                .Items = profiles.Select(Function(x) Map(x)).ToList()
+                }
+
+        End Function
+
+        Public Function UpdateProfile(id As string, profile As Profile) As Profile _
+            Implements IHeckYaBabyService.UpdateProfile
+
+
+            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
         
-            Dim entity = Map(profile)
+                Dim entity = Map(profile)
             
-            _repository.Update(entity)
+                _repository.Update(entity)
 
-            unitOfWork.Commit()
+                unitOfWork.Commit()
 
-        End Using
+            End Using
 
-        _serviceContext.ResponseContentType(ApplicationJson)
-        _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
-        Return profile
-    End Function
+            _serviceContext.ResponseContentType(ApplicationJson)
+            _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
+            Return profile
+        End Function
  
-    Public Sub DeleteProfile(id As String) Implements IHeckYaBabyService.DeleteProfile
+        Public Sub DeleteProfile(id As String) Implements IHeckYaBabyService.DeleteProfile
 
-        Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
+            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
 
-            Dim entityId = Integer.Parse(id)
+                Dim entityId = Integer.Parse(id)
 
-            _repository.Remove (Of ProfileEntity)(Function(x) x.Id = entityId)
+                _repository.Remove (Of ProfileEntity)(Function(x) x.Id = entityId)
 
-            unitOfWork.Commit()
+                unitOfWork.Commit()
 
-        End Using
+            End Using
 
-        _serviceContext.ResponseStatusCode(HttpStatusCode.NoContent)
+            _serviceContext.ResponseStatusCode(HttpStatusCode.NoContent)
 
-    End Sub
+        End Sub
 
-    Private Shared Function Map(profile As Profile) As ProfileEntity
-        return New ProfileEntity With{
-            .Id = profile.Id,
-            .Address = profile.Address,
-            .DateOfBirth = profile.DateOfBirth,
-            .Name = profile.Name,
-            .PhoneNumber = profile.PhoneNumber,
-            .FriendCount = profile.FriendCount,
-            .Active = profile.Active
-        }
+        Private Shared Function Map(profile As Profile) As ProfileEntity
+            return New ProfileEntity With{
+                .Id = profile.Id,
+                .Address = profile.Address,
+                .DateOfBirth = profile.DateOfBirth,
+                .Name = profile.Name,
+                .PhoneNumber = profile.PhoneNumber,
+                .FriendCount = profile.FriendCount,
+                .Active = profile.Active
+                }
  
-    End Function
+        End Function
 
-    Private Shared Function Map(entity As ProfileEntity) As Profile
+        Private Shared Function Map(entity As ProfileEntity) As Profile
 
-        return New Profile With{
-            .Id = entity.Id,
-            .Address = entity.Address,
-            .DateOfBirth = entity.DateOfBirth,
-            .Name = entity.Name,
-            .PhoneNumber = entity.PhoneNumber,
-            .FriendCount = entity.FriendCount,
-            .Active = entity.Active
-        }
+            return New Profile With{
+                .Id = entity.Id,
+                .Address = entity.Address,
+                .DateOfBirth = entity.DateOfBirth,
+                .Name = entity.Name,
+                .PhoneNumber = entity.PhoneNumber,
+                .FriendCount = entity.FriendCount,
+                .Active = entity.Active
+                }
 
-    End Function
-End Class
+        End Function
+    End Class
+End NameSpace
