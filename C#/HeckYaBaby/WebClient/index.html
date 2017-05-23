@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Heck Ya Baby</title>
+
+    <link href="content/kendo.common.min.css" rel="stylesheet" />
+    <link href="content/kendo.black.min.css" rel="stylesheet" />
+    <link href="content/site.css" rel="stylesheet"/> 
+
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/kendo.web.min.js"></script>
+
+    <meta charset="utf-8" />
+</head>
+<body>
+<div id="profiles" class="center"/>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var profileDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "http://localhost:8989/api/v1/profile",
+                    dataType: "json"
+                },
+                update: {
+                    url: function (profile) {
+                        return "http://localhost:8989/api/v1/profile/" + profile.Id;
+                    },
+                    contentType: "application/json; charset=UTF-8",
+                    dataType: "json",
+                    type: "PUT"
+                },
+                destroy: {
+                    url: function(profile) {
+                        return "http://localhost:8989/api/v1/profile/" + profile.Id;
+                    },
+                    dataType: "json",
+                    type: "DELETE"
+                },
+                create: {
+                    url: "http://localhost:8989/api/v1/profile",
+                    contentType: "application/json; charset=UTF-8",
+                    dataType: "json",
+                    type: "POST"
+                },
+                parameterMap: function(data) {
+                    return kendo.stringify(data);
+                }
+            },
+            error: function (e) {
+                alert("Status: " + e.status + "; Error message: " + e.errorThrown);
+            },
+            schema: {
+                    model: {
+                        id: "Id",
+                        fields: {
+                            Id: {
+                                defaultValue: -1,
+                                editable: false,
+                                nullable: false
+                            },
+                            Name: {
+                                editable: true,
+                                nullable: false
+                            },
+                            Address: {
+                                editable: true,
+                                nullable: false
+                            },
+                            PhoneNumber: {
+                                editable: true,
+                                nullable: false 
+                            },
+                            DateOfBirth: {
+                                editable: true,
+                                nullable: false,
+                                type: "date"
+                            },
+                            FriendCount: {
+                               editable: true, 
+                               nullable: false,
+                               type: "number",
+                               format: "{0:n0}"
+                            }
+                        }
+                    }
+            },
+            pageSize: 10
+        });
+
+        $("#profiles").kendoGrid({
+            dataSource: profileDataSource,
+            columns: [
+                { field: "Name", title: "Name" },
+                { field: "Address" },
+                { field: "PhoneNumber", title: "Phone Number"},
+                { field: "DateOfBirth", title: "Date Of Birth", format: "{0:MM/dd/yyyy}"},
+                { field: "FriendCount", title: "Number of Friends", format: "{0:n0}" },
+                { command: ["edit"] },
+                { command: ["destroy"]}
+            ],
+            toolbar: ["create"],
+            editable: "inline",
+            pageable: true,
+            scrollable: false,
+            selectable: true
+        });
+    });
+</script>
+
+</body>
+</html>
