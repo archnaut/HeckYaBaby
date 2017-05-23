@@ -2,6 +2,7 @@
 Imports System.ServiceModel
 Imports System.ServiceModel.Description
 Imports System.ServiceModel.Web
+Imports System.Threading
 Imports Backend.Infrastructure
 Imports Backend.Presentation
 
@@ -13,6 +14,8 @@ Module ConsoleHost
         Dim baseAddress = new Uri("http://localhost:8989")
 
         Using host As New WebServiceHost(GetType(HeckYaBabyService), baseAddress) 
+
+            AddHandler host.Faulted, AddressOf HostFalted
 
             Console.Write("Starting service...")
 
@@ -52,5 +55,13 @@ Module ConsoleHost
 
         Console.WriteLine("Done!")
 
+    End Sub
+
+    Private Sub HostFalted(ByVal sender  As Object, ByVal e As EventArgs)
+       Console.WriteLine("Service Host Faulted. The applications will now shut down.")
+       
+       Thread.Sleep(10000)
+        
+       Environment.Exit(-1)
     End Sub
 End Module

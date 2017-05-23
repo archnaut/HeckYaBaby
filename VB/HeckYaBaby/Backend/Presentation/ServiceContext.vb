@@ -14,11 +14,9 @@ Namespace Presentation
             WebOperationContext.Current.OutgoingResponse.ContentType = type 
         End Sub
 
-        Public ReadOnly Property Page As Integer Implements IServiceContext.Page
-            Get
-                Return ParameterValue(Of Integer)("page")
-            End Get
-        End Property
+        Public Sub AddHeader(name As String, value As String) Implements IServiceContext.AddHeader
+            WebOperationContext.Current.OutgoingResponse.Headers.Add(name, value)
+        End Sub
 
         Public ReadOnly Property PageSize As Integer Implements IServiceContext.PageSize
             Get
@@ -37,7 +35,7 @@ Namespace Presentation
             Dim value = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters(name)
 
             If String.IsNullOrEmpty(value) Then
-                Return CType(Nothing, T)
+                Return Nothing
             End If
 
             Return Convert.ChangeType(value, GetType(T))

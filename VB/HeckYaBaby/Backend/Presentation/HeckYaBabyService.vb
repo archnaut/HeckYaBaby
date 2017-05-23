@@ -20,90 +20,125 @@ Namespace Presentation
         End Sub
 
         Public Sub Options() Implements IHeckYaBabyService.Options
-
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
-
+            Try
+                _serviceContext.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+                _serviceContext.AddHeader("Access-Control-Allow-Headers", "Content-Type")
+            Catch
+                Throw New WebFaultException(Of String)("Server encountered and error", HttpStatusCode.InternalServerError)
+            End Try
         End Sub
 
         Public Function PostProfile(profile As Profile) As Profile Implements IHeckYaBabyService.PostProfile
 
+            If profile Is Nothing Then
+                Throw New WebFaultException(Of String)("Bad Request", HttpStatusCode.BadRequest)
+            End If
+
+            Dim response As Profile
+
+            Try
+                Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
+
+                    Dim entity = Map(profile)
+
+                    _repository.Add(entity)
+                    unitOfWork.Commit()
+
+                    response = Map(entity)
+
+                End Using
+            Catch
+                Throw New WebFaultException(Of String)("Error creating profile.", HttpStatusCode.InternalServerError)
+            End Try
+
             _serviceContext.ResponseContentType(ApplicationJson)
+            _serviceContext.ResponseStatusCode(HttpStatusCode.Created)
 
-            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
-
-                Dim entity = Map(profile)
-
-                _repository.Add(entity)
-
-                unitOfWork.Commit()
-
-                return Map(entity)
-            End Using
+            Return response
 
         End Function
 
 
         Public Function GetProfiles() As ProfilePage Implements IHeckYaBabyService.GetProfiles
 
+            Try
+                Dim pageSize = _serviceContext.PageSize
+                Dim skip = _serviceContext.Skip
 
-            Dim pageSize = _serviceContext.PageSize
-            Dim page = _serviceContext.Page - 1
+                Dim query = _repository.
+                        AllInstances (Of ProfileEntity).
+                        OrderBy(Function(x) x.Id).
+                        Skip(skip)
 
-            Dim query = _repository.
-                    AllInstances(Of ProfileEntity).
-                    OrderBy(Function(x) x.Id).
-                    Skip(page * pageSize)
+                Dim profiles As IEnumerable(Of ProfileEntity)
 
-            Dim profiles As IEnumerable(Of ProfileEntity)
+                If pageSize > 0 Then
+                    profiles = query.Take(pageSize).ToList()
+                Else
+                    profiles = query.ToList()
+                End If
 
-            If pageSize > 0 Then
-                profiles = query.Take(pageSize).ToList()
-            Else
-                profiles = query.ToList()
-            End If
+                _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
 
-            _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
-
-            return New ProfilePage With{
-                .ItemCount = _repository.AllInstances(of ProfileEntity).Count(),
-                .Items = profiles.Select(Function(x) Map(x)).ToList()
-                }
+                return New ProfilePage With{
+                    .ItemCount = _repository.AllInstances (of ProfileEntity).Count(),
+                    .Items = profiles.Select(Function(x) Map(x)).ToList()
+                    }
+            Catch
+                Throw new WebFaultException(Of String)("Failed to get profiles", HttpStatusCode.InternalServerError)
+            End Try
 
         End Function
 
         Public Function UpdateProfile(id As string, profile As Profile) As Profile _
             Implements IHeckYaBabyService.UpdateProfile
 
+            If( id < 1 Or profile Is Nothing)
+                Throw New WebFaultException(Of String)("Bad Request", HttpStatusCode.BadRequest)
+            End If
 
-            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
-        
-                Dim entity = Map(profile)
+            Try
+                Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
             
-                _repository.Update(entity)
+                    Dim entity = Map(profile)
+                
+                    _repository.Update(entity)
 
-                unitOfWork.Commit()
+                    unitOfWork.Commit()
 
-            End Using
+                End Using
 
-            _serviceContext.ResponseContentType(ApplicationJson)
-            _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
-            Return profile
+                _serviceContext.ResponseContentType(ApplicationJson)
+                _serviceContext.ResponseStatusCode(HttpStatusCode.OK)
+
+                Return profile
+            Catch
+                Throw new WebFaultException(Of String)("Failed to update profile", HttpStatusCode.InternalServerError)
+            End Try
+        
         End Function
  
         Public Sub DeleteProfile(id As String) Implements IHeckYaBabyService.DeleteProfile
 
-            Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
+            If(id < 1)
+                Throw new WebFaultException(Of String)("Bad Request", HttpStatusCode.BadRequest)
+            End If
 
-                Dim entityId = Integer.Parse(id)
+            Try
+                Using unitOfWork As IUnitOfWork = _repository.NewUnitOfWork()
 
-                _repository.Remove (Of ProfileEntity)(Function(x) x.Id = entityId)
+                    Dim entityId = Integer.Parse(id)
 
-                unitOfWork.Commit()
+                    _repository.Remove (Of ProfileEntity)(Function(x) x.Id = entityId)
 
-            End Using
+                    unitOfWork.Commit()
 
-            _serviceContext.ResponseStatusCode(HttpStatusCode.NoContent)
+                End Using
+
+                _serviceContext.ResponseStatusCode(HttpStatusCode.NoContent)
+            Catch
+                Throw new WebFaultException(Of String)("Failed to delete profile", HttpStatusCode.InternalServerError)
+            End Try
 
         End Sub
 
